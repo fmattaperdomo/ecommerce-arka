@@ -1,53 +1,50 @@
 package com.fmattaperdomo.ecommerce_arka.services;
 
-import com.fmattaperdomo.ecommerce_arka.models.Category;
-import org.springframework.http.HttpStatus;
+import com.fmattaperdomo.ecommerce_arka.dtos.CategoryResponse;
+import com.fmattaperdomo.ecommerce_arka.exceptions.APIException;
+import com.fmattaperdomo.ecommerce_arka.exceptions.ResourceNotFoundException;
+import com.fmattaperdomo.ecommerce_arka.entities.Category;
+import com.fmattaperdomo.ecommerce_arka.repositories.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    private List<Category> categories = new ArrayList<>();
-    private Long nextId = 1L;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Override
-    public List<Category> getCategories() {
+    public CategoryResponse getCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        if (categories.isEmpty()) {
+            throw new APIException("No category created till now.");
+        }
         return categories;
     }
 
     @Override
     public void createCategory(Category category) {
-        category.setCategoryId(nextId++);
-        categories.add(category);
+        Category savedCategory = categoryRepository.findByCategoryName(category.getCategoryName());
+        if (savedCategory != null) {
+            throw new APIException("Category with the name " + category.getCategoryName() + " already exists!!!");
+        }
+        categoryRepository.save(category);
     }
 
     @Override
     public String deleteCategory(Long categoryId) {
-        Category category = categories.stream()
-                .filter(c -> c.getCategoryId().equals(categoryId))
-                .findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Category not found"));
-
-        categories.remove(category);
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category","categoryId", categoryId));
+        categoryRepository.delete(category);
         return "Category deleted";
     }
 
     @Override
     public Category updateCategory(Category category,Long categoryId) {
-        Optional<Category> optionalCategory = categories.stream()
-                .filter(c -> c.getCategoryId().equals(categoryId))
-                .findFirst();
-
-        if (optionalCategory.isPresent()) {
-            Category updatedCategory = optionalCategory.get();
-            updatedCategory.setCategoryName(category.getCategoryName());
-            return updatedCategory;
-        }else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Category not found");
-        }
+        Category savedCategory = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category","categoryId", categoryId));
+        category.setCategoryId(categoryId);
+        savedCategory = categoryRepository.save(category);
+        return savedCategory;
     }
 }

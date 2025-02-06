@@ -1,0 +1,15 @@
+package com.fmattaperdomo.ecommerce_arka.dtos;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CategoryResponse {
+    private List<CategoryDto> content;
+}
+
