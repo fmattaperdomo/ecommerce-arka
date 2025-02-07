@@ -10,7 +10,6 @@ import com.fmattaperdomo.ecommerce_arka.repositories.CategoryRepository;
 import com.fmattaperdomo.ecommerce_arka.repositories.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
