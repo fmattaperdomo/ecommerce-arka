@@ -5,3 +5,4 @@ public enum AppRole {
     ROLE_SELLER,
     ROLE_ADMIN
 }
+

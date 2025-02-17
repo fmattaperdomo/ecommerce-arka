@@ -1,15 +1,16 @@
 package com.fmattaperdomo.ecommerce_arka.services;
 
-import com.fmattaperdomo.ecommerce_arka.dtos.ProductDto;
-import com.fmattaperdomo.ecommerce_arka.dtos.ProductResponse;
-import com.fmattaperdomo.ecommerce_arka.entities.Category;
-import com.fmattaperdomo.ecommerce_arka.entities.Product;
 import com.fmattaperdomo.ecommerce_arka.exceptions.APIException;
 import com.fmattaperdomo.ecommerce_arka.exceptions.ResourceNotFoundException;
+import com.fmattaperdomo.ecommerce_arka.entities.Category;
+import com.fmattaperdomo.ecommerce_arka.entities.Product;
+import com.fmattaperdomo.ecommerce_arka.dtos.ProductDto;
+import com.fmattaperdomo.ecommerce_arka.dtos.ProductResponse;
 import com.fmattaperdomo.ecommerce_arka.repositories.CategoryRepository;
 import com.fmattaperdomo.ecommerce_arka.repositories.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
@@ -35,11 +36,11 @@ public class ProductServiceImpl implements ProductService{
     @Autowired
     private FileService fileService;
 
-    //@Value("${project.image}")
-    //private String path;
+    @Value("${project.image}")
+    private String path;
 
     @Override
-    public ProductDto addProduct(Long categoryId, ProductDto productDTO) {
+    public ProductDto addProduct(Long categoryId, ProductDto productDto) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Category", "categoryId", categoryId));
@@ -48,14 +49,14 @@ public class ProductServiceImpl implements ProductService{
 
         List<Product> products = category.getProducts();
         for (Product value : products) {
-            if (value.getProductName().equals(productDTO.getProductName())) {
+            if (value.getProductName().equals(productDto.getProductName())) {
                 isProductNotPresent = false;
                 break;
             }
         }
 
         if (isProductNotPresent) {
-            Product product = modelMapper.map(productDTO, Product.class);
+            Product product = modelMapper.map(productDto, Product.class);
             product.setImage("default.png");
             product.setCategory(category);
             double specialPrice = product.getPrice() -
@@ -187,8 +188,8 @@ public class ProductServiceImpl implements ProductService{
         Product productFromDb = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
-        //String fileName = fileService.uploadImage(path, image);
-        //productFromDb.setImage(fileName);
+        String fileName = fileService.uploadImage(path, image);
+        productFromDb.setImage(fileName);
 
         Product updatedProduct = productRepository.save(productFromDb);
         return modelMapper.map(updatedProduct, ProductDto.class);

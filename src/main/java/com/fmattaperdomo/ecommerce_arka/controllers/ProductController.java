@@ -16,14 +16,15 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api")
 public class ProductController {
+
     @Autowired
     ProductService productService;
 
     @PostMapping("/admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDto> addProduct(@Valid @RequestBody ProductDto productDto,
                                                  @PathVariable Long categoryId){
-        ProductDto savedProductDTO = productService.addProduct(categoryId, productDto);
-        return new ResponseEntity<>(savedProductDTO, HttpStatus.CREATED);
+        ProductDto savedProductDto = productService.addProduct(categoryId, productDto);
+        return new ResponseEntity<>(savedProductDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/public/products")
@@ -60,8 +61,8 @@ public class ProductController {
     @PutMapping("/admin/products/{productId}")
     public ResponseEntity<ProductDto> updateProduct(@Valid @RequestBody ProductDto productDto,
                                                     @PathVariable Long productId){
-        ProductDto updatedProductDTO = productService.updateProduct(productId, productDto);
-        return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
+        ProductDto updatedProductDto = productService.updateProduct(productId, productDto);
+        return new ResponseEntity<>(updatedProductDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/products/{productId}")
@@ -72,7 +73,7 @@ public class ProductController {
 
     @PutMapping("/products/{productId}/image")
     public ResponseEntity<ProductDto> updateProductImage(@PathVariable Long productId,
-                                                         @RequestParam("image") MultipartFile image) throws IOException {
+                                                         @RequestParam("image")MultipartFile image) throws IOException {
         ProductDto updatedProduct = productService.updateProductImage(productId, image);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
