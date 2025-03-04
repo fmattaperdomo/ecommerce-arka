@@ -47,6 +47,13 @@ public class User {
         this.password = password;
     }
 
+    public User(Long userId, String userName, String email, String password) {
+        this.userId = userId;
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+    }
+
     @Setter
     @Getter
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},

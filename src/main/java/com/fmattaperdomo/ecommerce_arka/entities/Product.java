@@ -46,4 +46,17 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     private List<CartItem> products = new ArrayList<>();
+
+    public Product(Long productId, String productName, String image, String description, Integer quantity, double price, double discount, double specialPrice, Category category, User user) {
+        this.productId = productId;
+        this.productName = productName;
+        this.image = image;
+        this.description = description;
+        this.quantity = quantity;
+        this.price = price;
+        this.discount = discount;
+        this.specialPrice = specialPrice;
+        this.category = category;
+        this.user = user;
+    }
 }
